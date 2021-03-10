@@ -4,8 +4,7 @@ import { persistStore, persistReducer } from 'redux-persist';
 import immutableTransform from 'redux-persist-transform-immutable';
 import logger from 'redux-logger';
 import AsyncStorage from '@react-native-community/async-storage';
-import authReducer from './features/authentication/reducers/authenticationReducer';
-import signupReducer from './features/signup/reducers/signupReducer';
+import hackerNewsReducer from './features/hackerNews/reducers/hackerNewsReducer';
 
 const persistConfig = {
   transforms: [immutableTransform()],
@@ -15,7 +14,7 @@ const persistConfig = {
 };
 
 const rootReducer = combineReducers({
-  auth: authReducer,
+  hackerNews: hackerNewsReducer,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
