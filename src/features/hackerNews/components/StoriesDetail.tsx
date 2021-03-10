@@ -1,25 +1,18 @@
 import React, { useEffect } from 'react';
-import { View, Text } from 'react-native';
-import { DefaultNavigationProps } from '../../../navigation/types';
-// if you need redux state
-// import { RootState } from '../../../reduxStore';
-// import { useSelector, useDispatch } from 'react-redux';
+import { View, Text, TouchableOpacity } from 'react-native';
+import { DefaultNavigationProps, DefaultRouteProps } from '../../../navigation/types';
+import { WebView } from 'react-native-webview';
 
 interface Props {
-  navigation: DefaultNavigationProps<'TopStories'>;
+  navigation: DefaultNavigationProps<'StoriesDetail'>;
+  route: DefaultRouteProps<'StoriesDetail'>
 }
 
 const StoriesDetail: React.FC<Props> = props => {
-//   if you need state
-//const state = useSelector((_state: RootState) => _state.hackerNews);
-// const dispatch = useDispatch();
-  useEffect(() => {
-    // on first mount
-  }, []);
-
+  
   return (
-    <View style={{backgroundColor: 'pink'}}>
-        <Text>This is a test</Text>
+    <View style={{flex: 1}}>
+         <WebView source={{ uri: props.route.params.link }} />
     </View>
   );
 };

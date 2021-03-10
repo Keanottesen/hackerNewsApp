@@ -4,7 +4,7 @@ import * as Screens from './Screens';
 
 export type RootStackParamList = {
   [Screens.TOP_STORIES]: undefined;
-  [Screens.STORIES_DETAIL]: {id: number};
+  [Screens.STORIES_DETAIL]: {link: string};
 };
 
 export type DefaultNavigationProps<

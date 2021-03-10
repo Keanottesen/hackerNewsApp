@@ -1,37 +1,45 @@
-/* eslint-disable camelcase */
 import axios from 'axios';
-import * as analytics from 'expo-analytics-segment';
-import { showMessage } from 'react-native-flash-message';
-import { StackNavigationProp } from '@react-navigation/stack';
 import { AnyAction } from 'redux';
 import { ThunkAction } from 'redux-thunk';
-import {
-    //logic
-  } from './hackerNewsMiddlewareLogic';
-import {
-    DefaultNavigationProps,
-    RootStackParamList,
-} from '../../../navigation/types';
-import { baseUrl, uniqueId } from '../../../api/constants';
-import {
-    EXAMPLE_FAIL,
-    EXAMPLE_LOADING,
-    EXAMPLE_SUCCESS,
-  } from './hackerNewsMiddlewareTypes';
-  import { RootState } from '../../../reduxStore';
-type NavigationProp = StackNavigationProp<RootStackParamList, 'Example'>;
+import { baseUrl } from '../../../api/constans';
+import { RootState } from '../../../reduxStore';
+import { TOP_STORIES_FAIL, TOP_STORIES_LOADING, TOP_STORIES_SUCCESS } from './hackerNewsMiddlewareTypes';
+
 type Thunk = ThunkAction<Promise<void>, RootState, unknown, AnyAction>;
 
-export const example = (
-    // parametre
-  ): Thunk => async dispatch => {
-    const url = `${baseUrl}/example`;
-    // const body = if you post;
-    dispatch({ type: EXAMPLE_LOADING });
+export const getTopStories = (): Thunk => async dispatch => {
+    const url = `${baseUrl}/topstories.json`;
+    
+    dispatch({ type: TOP_STORIES_LOADING });
     try {
-      const response = await axios.post(url, body);
-      dispatch({ type: EXAMPLE_SUCCESS });
+      const response = await axios.get(url);
+      const data = response.data
+      data.length = 10
+      
+      const stories = []
+
+      for (const item of data) {
+        const detailUrl = `${baseUrl}/item/${item}.json`;
+        const detailResponse = await axios.get(detailUrl);
+        const {by: auther, title, url: articleUrl, time, score} = detailResponse.data
+        const autherUrl = `${baseUrl}/user/${auther}.json`;
+        const autherResponse = await axios.get(autherUrl);
+        const {id: autherId, karma: autherKarma} = autherResponse.data
+        stories.push({
+          id: item,
+          title,
+          url: articleUrl,
+          time,
+          score,
+          autherId,
+          autherKarma
+        })
+      }
+      stories.sort((a, b) => a.score - b.score)
+      stories.reverse()
+      dispatch({ type: TOP_STORIES_SUCCESS, stories });
     } catch (error) {
-      dispatch({ type: EXAMPLE_FAIL });
+      dispatch({ type: TOP_STORIES_FAIL });
     }
-  };
+};
+
